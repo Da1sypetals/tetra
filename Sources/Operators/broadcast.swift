@@ -37,7 +37,7 @@ private func broadcastTwoShapes(_ shape1: Shape, _ shape2: Shape) -> Shape? {
     let ndim2 = shape2.count
     let maxDim = max(ndim1, ndim2)
 
-    var resultShape = [ShapeType]()
+    var resultShape = Shape()
 
     // Iterate from right to left (least significant dimension to most)
     for i in 0..<maxDim {
