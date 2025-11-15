@@ -6,7 +6,8 @@ public typealias Shape = [ShapeType]
 // Implement String.StringInterpolation for Shape
 extension String.StringInterpolation {
     mutating func appendInterpolation(_ shape: Shape) {
-        let description = "["
+        let description =
+            "["
             + shape.map { dim in
                 switch dim {
                 case .Static(let value):
@@ -80,8 +81,6 @@ public indirect enum Node {
         }
 
     }
-
-    
 
     // Get a string representation of the tensor
     func description() -> String {

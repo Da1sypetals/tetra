@@ -1,7 +1,5 @@
 import Foundation
 
-
-
 /// BinaryOp class represents a binary operation that can be applied to two tensors
 public class BinaryOp {
     private let name: String
@@ -36,7 +34,7 @@ public class BinaryOp {
                 "Left input data type mismatch for operation '\(self.name)': expected \(self.leftDtype.rawValue), got \(actualLeftDtype.rawValue)"
             )
         }
-        
+
         // Check if right input data type matches the expected right data type
         let actualRightDtype = right.dtype()
         if actualRightDtype != self.rightDtype {
@@ -44,7 +42,7 @@ public class BinaryOp {
                 "Right input data type mismatch for operation '\(self.name)': expected \(self.rightDtype.rawValue), got \(actualRightDtype.rawValue)"
             )
         }
-        
+
         // Get the shapes from the input nodes
         let leftShape = left.shape()
         let rightShape = right.shape()
