@@ -28,30 +28,24 @@ public class BinaryOp {
     /// - Throws: RuntimeError if the shapes are not broadcastable or data types don't match
     public func call(_ left: Node, _ right: Node) -> Node {
         // Check if left input data type matches the expected left data type
-        let actualLeftDtype = left.dtype
-        if actualLeftDtype != self.leftDtype {
+        guard left.dtype == self.leftDtype else {
             fatalError(
-                "Left input data type mismatch for operation '\(self.name)': expected \(self.leftDtype.rawValue), got \(actualLeftDtype.rawValue)"
+                "Left input data type mismatch for operation '\(self.name)': expected \(self.leftDtype), got \(left.dtype)"
             )
         }
 
         // Check if right input data type matches the expected right data type
-        let actualRightDtype = right.dtype
-        if actualRightDtype != self.rightDtype {
+        guard right.dtype == self.rightDtype else {
             fatalError(
-                "Right input data type mismatch for operation '\(self.name)': expected \(self.rightDtype.rawValue), got \(actualRightDtype.rawValue)"
+                "Right input data type mismatch for operation '\(self.name)': expected \(self.rightDtype), got \(right.dtype)"
             )
         }
 
-        // Get the shapes from the input nodes
-        let leftShape = left.shape
-        let rightShape = right.shape
-
         // Try to broadcast the shapes
-        guard let broadcastedShape = broadcast(leftShape, rightShape) else {
+        guard let broadcastedShape = broadcast(left.shape, right.shape) else {
             // If shapes are not broadcastable, throw a runtime error
             fatalError(
-                "Cannot broadcast shapes \(leftShape) and \(rightShape) for operation '\(name)'"
+                "Cannot broadcast shapes \(left.shape) and \(right.shape) for operation '\(name)'"
             )
         }
 

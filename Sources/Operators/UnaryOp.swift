@@ -22,10 +22,9 @@ public class UnaryOp {
     /// - Returns: A new Node representing the result of the unary operation
     public func call(_ input: Node) -> Node {
         // Check if input data type matches the expected input data type
-        let actualInputDtype = input.dtype
-        if actualInputDtype != self.inputDtype {
+        guard input.dtype == self.inputDtype else {
             fatalError(
-                "Input data type mismatch for operation '\(self.name)': expected \(self.inputDtype.rawValue), got \(actualInputDtype.rawValue)"
+                "Input data type mismatch for operation '\(self.name)': expected \(self.inputDtype), got \(input.dtype)"
             )
         }
 

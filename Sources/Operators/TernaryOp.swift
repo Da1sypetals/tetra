@@ -15,7 +15,10 @@ public class TernaryOp {
     ///   - secondDtype: The data type of the second input tensor
     ///   - thirdDtype: The data type of the third input tensor
     ///   - outputDtype: The data type of the output tensor
-    public init(name: String, firstDtype: DataType, secondDtype: DataType, thirdDtype: DataType, outputDtype: DataType) {
+    public init(
+        name: String, firstDtype: DataType, secondDtype: DataType, thirdDtype: DataType,
+        outputDtype: DataType
+    ) {
         self.name = name
         self.firstDtype = firstDtype
         self.secondDtype = secondDtype
@@ -32,39 +35,31 @@ public class TernaryOp {
     /// - Throws: RuntimeError if the shapes are not broadcastable or data types don't match
     public func call(_ first: Node, _ second: Node, _ third: Node) -> Node {
         // Check if first input data type matches the expected first data type
-        let actualFirstDtype = first.dtype
-        if actualFirstDtype != self.firstDtype {
+        guard first.dtype == self.firstDtype else {
             fatalError(
-                "First input data type mismatch for operation '\(self.name)': expected \(self.firstDtype.rawValue), got \(actualFirstDtype.rawValue)"
+                "First input data type mismatch for operation '\(self.name)': expected \(self.firstDtype), got \(first.dtype)"
             )
         }
 
         // Check if second input data type matches the expected second data type
-        let actualSecondDtype = second.dtype
-        if actualSecondDtype != self.secondDtype {
+        guard second.dtype == self.secondDtype else {
             fatalError(
-                "Second input data type mismatch for operation '\(self.name)': expected \(self.secondDtype.rawValue), got \(actualSecondDtype.rawValue)"
+                "Second input data type mismatch for operation '\(self.name)': expected \(self.secondDtype), got \(second.dtype)"
             )
         }
 
         // Check if third input data type matches the expected third data type
-        let actualThirdDtype = third.dtype
-        if actualThirdDtype != self.thirdDtype {
+        guard third.dtype == self.thirdDtype else {
             fatalError(
-                "Third input data type mismatch for operation '\(self.name)': expected \(self.thirdDtype.rawValue), got \(actualThirdDtype.rawValue)"
+                "Third input data type mismatch for operation '\(self.name)': expected \(self.thirdDtype), got \(third.dtype)"
             )
         }
 
-        // Get the shapes from the input nodes
-        let firstShape = first.shape
-        let secondShape = second.shape
-        let thirdShape = third.shape
-
         // Try to broadcast the shapes
-        guard let broadcastedShape = broadcast(firstShape, secondShape, thirdShape) else {
+        guard let broadcastedShape = broadcast(first.shape, second.shape, third.shape) else {
             // If shapes are not broadcastable, throw a runtime error
             fatalError(
-                "Cannot broadcast shapes \(firstShape), \(secondShape), and \(thirdShape) for operation '\(name)'"
+                "Cannot broadcast shapes \(first.shape), \(second.shape), and \(third.shape) for operation '\(name)'"
             )
         }
 
