@@ -9,13 +9,13 @@ let leafTensor = Node.leaf(
         .Static(2),
         .Dynamic("batch_size"),
     ], dtype: .float32)
-print("Leaf tensor: \(leafTensor.description())")
+print("Leaf tensor: \(leafTensor)")
 print("Number of dimensions: \(leafTensor.ndim())")
 print()
 
 // Example with higher dimensional tensor
 let highDimTensor = Node.leaf(shape: [ShapeType.Static(2), ShapeType.Static(3)], dtype: .float16)
-print("High dimensional tensor: \(highDimTensor.description())")
+print("High dimensional tensor: \(highDimTensor)")
 print("Number of dimensions: \(highDimTensor.ndim())")
 print()
 
@@ -24,8 +24,8 @@ let sigmoidOpFloat32 = UnaryOp(name: "sigmoid", inputDtype: .float32, outputDtyp
 let sigmoidOpFloat16 = UnaryOp(name: "sigmoid", inputDtype: .float16, outputDtype: .float16)
 let res1 = sigmoidOpFloat32.call(leafTensor)
 let res2 = sigmoidOpFloat16.call(highDimTensor)
-print(res1.description())
-print(res2.description())
+print(res1)
+print(res2)
 print()
 
 // Test broadcast function
@@ -110,9 +110,9 @@ let addOp = BinaryOp(name: "add", leftDtype: .float32, rightDtype: .float32, out
 let result = addOp.call(tensor1, tensor2)
 
 // Print the results
-print("Tensor1: \(tensor1.description())")
-print("Tensor2: \(tensor2.description())")
-print("Result: \(result.description())")
+print("Tensor1: \(tensor1)")
+print("Tensor2: \(tensor2)")
+print("Result: \(result)")
 print()
 
 // Test with different shapes that can be broadcasted
@@ -128,7 +128,7 @@ let mulOp = BinaryOp(name: "mul", leftDtype: .float16, rightDtype: .float16, out
 let result2 = mulOp.call(tensor3, tensor4)
 
 // Print the results
-print("Tensor3: \(tensor3.description())")
-print("Tensor4: \(tensor4.description())")
-print("Result2: \(result2.description())")
+print("Tensor3: \(tensor3)")
+print("Tensor4: \(tensor4)")
+print("Result2: \(result2)")
 print()

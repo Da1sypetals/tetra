@@ -1,8 +1,5 @@
 import Foundation
 
-// Create a type alias for [ShapeType]
-public typealias Shape = [ShapeType]
-
 // Implement String.StringInterpolation for Shape
 extension String.StringInterpolation {
     mutating func appendInterpolation(_ shape: Shape) {
@@ -20,10 +17,26 @@ extension String.StringInterpolation {
     }
 }
 
+// Implement String.StringInterpolation for Node
+extension String.StringInterpolation {
+    mutating func appendInterpolation(_ node: Node) {
+        switch node {
+        case .leaf(_, let dtype):
+            appendLiteral("Leaf[shape: \(node.shape()), dtype: \(dtype.rawValue)]")
+        case .unary(let name, _, let dtype, _):
+            appendLiteral("Unary[name: \(name), shape: \(node.shape()), dtype: \(dtype.rawValue)]")
+        case .binary(let name, _, let dtype, _, _):
+            appendLiteral("Binary[name: \(name), shape: \(node.shape()), dtype: \(dtype.rawValue)]")
+        }
+    }
+}
+
+// Create a type alias for [ShapeType]
+public typealias Shape = [ShapeType]
+
 public enum ShapeType {
     case Static(UInt64)
     case Dynamic(String)
-
 }
 
 public enum DataType: String, CaseIterable {
@@ -82,17 +95,4 @@ public indirect enum Node {
 
     }
 
-    // Get a string representation of the tensor
-    func description() -> String {
-        switch self {
-        case .leaf(_, let dtype):
-            return "Leaf[shape: \(self.shape()), dtype: \(dtype.rawValue)]"
-        case .unary(let name, _, let dtype, _):
-            return
-                "Unary[name: \(name), shape: \(self.shape()), dtype: \(dtype.rawValue)]"
-        case .binary(let name, _, let dtype, _, _):
-            return
-                "Binary[name: \(name), shape: \(self.shape()), dtype: \(dtype.rawValue)]"
-        }
-    }
 }
