@@ -1,0 +1,78 @@
+import Foundation
+
+enum ShapeType {
+    case Static(UInt64)
+    case Dynamic(String)
+
+}
+
+enum DataType: String, CaseIterable {
+    case float32 = "Float32"
+    case float16 = "Float16"
+    case bfloat16 = "BFloat16"
+    case int32 = "Int32"
+    case int64 = "Int64"
+    case uint32 = "UInt32"
+    case uint64 = "UInt64"
+    case bool = "Bool"
+}
+
+// Tensor enum with self-referencing capabilities and reference semantics
+indirect enum Node {
+    case leaf(shape: [ShapeType], dtype: DataType)
+    case unary(name: String, shape: [ShapeType], dtype: DataType, operand: Node)
+    case binary(name: String, shape: [ShapeType], dtype: DataType, left: Node, right: Node)
+
+    // Get rank (number of dimensions) of the tensor
+    func ndim() -> Int {
+        switch self {
+        case .leaf(let shape, _):
+            return shape.count
+        case .unary(_, let shape, _, _):
+            return shape.count
+        case .binary(_, let shape, _, _, _):
+            return shape.count
+        }
+    }
+
+    func shape() -> [ShapeType] {
+        switch self {
+        case .leaf(let shape, _):
+            return shape
+        case .unary(_, let shape, _, _):
+            return shape
+        case .binary(_, let shape, _, _, _):
+            return shape
+        }
+
+    }
+
+    private func print_shape() -> String {
+        // if is static, just print the number
+        // if dynamic, print <name>
+        let shape = self.shape()
+        return "("
+            + shape.map { shapeType in
+                switch shapeType {
+                case .Static(let value):
+                    return String(value)
+                case .Dynamic(let name):
+                    return "<\(name)>"
+                }
+            }.joined(separator: ", ") + ")"
+    }
+
+    // Get a string representation of the tensor
+    func description() -> String {
+        switch self {
+        case .leaf(_, let dtype):
+            return "Leaf[shape: \(self.print_shape()), dtype: \(dtype.rawValue)]"
+        case .unary(let name, _, let dtype, _):
+            return
+                "Unary[name: \(name), shape: \(self.print_shape()), dtype: \(dtype.rawValue)]"
+        case .binary(let name, _, let dtype, _, _):
+            return
+                "Binary[name: \(name), shape: \(self.print_shape()), dtype: \(dtype.rawValue)]"
+        }
+    }
+}

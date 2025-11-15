@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:example1}",
+            "name": "Debug TensorMeta",
+            "target": "TensorMeta",
+            "configuration": "debug",
+            "preLaunchTask": "swift: Build Debug TensorMeta"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:example1}",
+            "name": "Release TensorMeta",
+            "target": "TensorMeta",
+            "configuration": "release",
+            "preLaunchTask": "swift: Build Release TensorMeta"
+        }
+    ]
+}
