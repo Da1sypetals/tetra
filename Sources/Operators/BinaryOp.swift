@@ -1,17 +1,6 @@
 import Foundation
 
-/// Helper function to describe shape for error messages
-private func describeShape(_ shape: [ShapeType]) -> String {
-    return "["
-        + shape.map { dim in
-            switch dim {
-            case .Static(let value):
-                return String(value)
-            case .Dynamic(let name):
-                return "<\(name)>"
-            }
-        }.joined(separator: ", ") + "]"
-}
+
 
 /// BinaryOp class represents a binary operation that can be applied to two tensors
 public class BinaryOp {
@@ -64,7 +53,7 @@ public class BinaryOp {
         guard let broadcastedShape = broadcast(leftShape, rightShape) else {
             // If shapes are not broadcastable, throw a runtime error
             fatalError(
-                "Cannot broadcast shapes \(describeShape(leftShape)) and \(describeShape(rightShape)) for operation '\(name)'"
+                "Cannot broadcast shapes \(leftShape) and \(rightShape) for operation '\(name)'"
             )
         }
 

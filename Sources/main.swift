@@ -35,7 +35,7 @@ print("=== Testing Broadcast Function ===")
 let shape1 = [ShapeType.Static(2), ShapeType.Static(3)]
 let shape2 = [ShapeType.Static(3)]
 if let broadcasted1 = broadcast(shape1, shape2) {
-    print("Broadcasted shape1: \(shapeDescription(broadcasted1))")
+    print("Broadcasted shape1: \(broadcasted1)")
 } else {
     print("Shapes are not broadcastable")
 }
@@ -44,7 +44,7 @@ if let broadcasted1 = broadcast(shape1, shape2) {
 let shape3 = [ShapeType.Static(1), ShapeType.Static(4), ShapeType.Static(1)]
 let shape4 = [ShapeType.Static(3), ShapeType.Static(1), ShapeType.Static(5)]
 if let broadcasted2 = broadcast(shape3, shape4) {
-    print("Broadcasted shape2: \(shapeDescription(broadcasted2))")
+    print("Broadcasted shape2: \(broadcasted2)")
 } else {
     print("Shapes are not broadcastable")
 }
@@ -53,7 +53,7 @@ if let broadcasted2 = broadcast(shape3, shape4) {
 let shape5 = [ShapeType.Static(2), ShapeType.Static(3)]
 let shape6 = [ShapeType.Static(4), ShapeType.Static(5)]
 if let broadcasted3 = broadcast(shape5, shape6) {
-    print("Broadcasted shape3: \(shapeDescription(broadcasted3))")
+    print("Broadcasted shape3: \(broadcasted3)")
 } else {
     print("Shapes are not broadcastable")
 }
@@ -63,7 +63,7 @@ let shape7 = [ShapeType.Static(2), ShapeType.Static(1)]
 let shape8 = [ShapeType.Static(1), ShapeType.Static(3)]
 let shape9 = [ShapeType.Static(3)]
 if let broadcasted4 = broadcast(shape7, shape8, shape9) {
-    print("Broadcasted shape4: \(shapeDescription(broadcasted4))")
+    print("Broadcasted shape4: \(broadcasted4)")
 } else {
     print("Shapes are not broadcastable")
 }
@@ -72,7 +72,7 @@ if let broadcasted4 = broadcast(shape7, shape8, shape9) {
 let shape10 = [ShapeType.Dynamic("batch"), ShapeType.Static(1)]
 let shape11 = [ShapeType.Static(1), ShapeType.Static(3)]
 if let broadcasted5 = broadcast(shape10, shape11) {
-    print("Broadcasted shape5: \(shapeDescription(broadcasted5))")
+    print("Broadcasted shape5: \(broadcasted5)")
 } else {
     print("Shapes are not broadcastable")
 }
@@ -81,7 +81,7 @@ if let broadcasted5 = broadcast(shape10, shape11) {
 let shape12 = [ShapeType.Dynamic("batch"), ShapeType.Static(1)]
 let shape13 = [ShapeType.Dynamic("sequence"), ShapeType.Static(3)]
 if let broadcasted6 = broadcast(shape12, shape13) {
-    print("Broadcasted shape6: \(shapeDescription(broadcasted6))")
+    print("Broadcasted shape6: \(broadcasted6)")
 } else {
     print("Shapes are not broadcastable")
 }
@@ -90,7 +90,7 @@ if let broadcasted6 = broadcast(shape12, shape13) {
 let shape14 = [ShapeType.Dynamic("batch"), ShapeType.Static(1)]
 let shape15 = [ShapeType.Dynamic("batch"), ShapeType.Static(3)]
 if let broadcasted7 = broadcast(shape14, shape15) {
-    print("Broadcasted shape7: \(shapeDescription(broadcasted7))")
+    print("Broadcasted shape7: \(broadcasted7)")
 } else {
     print("Shapes are not broadcastable")
 }
@@ -132,16 +132,3 @@ print("Tensor3: \(tensor3.description())")
 print("Tensor4: \(tensor4.description())")
 print("Result2: \(result2.description())")
 print()
-
-// Helper function to describe shape
-func shapeDescription(_ shape: [ShapeType]) -> String {
-    return "["
-        + shape.map { dim in
-            switch dim {
-            case .Static(let value):
-                return String(value)
-            case .Dynamic(let name):
-                return "<\(name)>"
-            }
-        }.joined(separator: ", ") + "]"
-}

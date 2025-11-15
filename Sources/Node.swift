@@ -1,5 +1,24 @@
 import Foundation
 
+// Create a type alias for [ShapeType]
+public typealias Shape = [ShapeType]
+
+// Implement String.StringInterpolation for Shape
+extension String.StringInterpolation {
+    mutating func appendInterpolation(_ shape: Shape) {
+        let description = "["
+            + shape.map { dim in
+                switch dim {
+                case .Static(let value):
+                    return String(value)
+                case .Dynamic(let name):
+                    return "<\(name)>"
+                }
+            }.joined(separator: ", ") + "]"
+        appendLiteral(description)
+    }
+}
+
 public enum ShapeType {
     case Static(UInt64)
     case Dynamic(String)
@@ -19,9 +38,9 @@ public enum DataType: String, CaseIterable {
 
 // Tensor enum with self-referencing capabilities and reference semantics
 public indirect enum Node {
-    case leaf(shape: [ShapeType], dtype: DataType)
-    case unary(name: String, shape: [ShapeType], dtype: DataType, operand: Node)
-    case binary(name: String, shape: [ShapeType], dtype: DataType, left: Node, right: Node)
+    case leaf(shape: Shape, dtype: DataType)
+    case unary(name: String, shape: Shape, dtype: DataType, operand: Node)
+    case binary(name: String, shape: Shape, dtype: DataType, left: Node, right: Node)
 
     static func scalar(dtype: DataType) -> Node {
         return .leaf(shape: [], dtype: dtype)
@@ -50,7 +69,7 @@ public indirect enum Node {
         }
     }
 
-    func shape() -> [ShapeType] {
+    func shape() -> Shape {
         switch self {
         case .leaf(let shape, _):
             return shape
@@ -62,32 +81,19 @@ public indirect enum Node {
 
     }
 
-    func print_shape() -> String {
-        // if is static, just print the number
-        // if dynamic, print <name>
-        let shape = self.shape()
-        return "("
-            + shape.map { shapeType in
-                switch shapeType {
-                case .Static(let value):
-                    return String(value)
-                case .Dynamic(let name):
-                    return "<\(name)>"
-                }
-            }.joined(separator: ", ") + ")"
-    }
+    
 
     // Get a string representation of the tensor
     func description() -> String {
         switch self {
         case .leaf(_, let dtype):
-            return "Leaf[shape: \(self.print_shape()), dtype: \(dtype.rawValue)]"
+            return "Leaf[shape: \(self.shape()), dtype: \(dtype.rawValue)]"
         case .unary(let name, _, let dtype, _):
             return
-                "Unary[name: \(name), shape: \(self.print_shape()), dtype: \(dtype.rawValue)]"
+                "Unary[name: \(name), shape: \(self.shape()), dtype: \(dtype.rawValue)]"
         case .binary(let name, _, let dtype, _, _):
             return
-                "Binary[name: \(name), shape: \(self.print_shape()), dtype: \(dtype.rawValue)]"
+                "Binary[name: \(name), shape: \(self.shape()), dtype: \(dtype.rawValue)]"
         }
     }
 }

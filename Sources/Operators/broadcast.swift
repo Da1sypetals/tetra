@@ -1,9 +1,9 @@
 import Foundation
 
 /// Broadcast function that takes arbitrary number of shapes and returns broadcasted shape if broadcastable, else nil
-/// - Parameter shapes: Variable number of [ShapeType] arrays to broadcast
+/// - Parameter shapes: Variable number of Shape arrays to broadcast
 /// - Returns: Broadcasted shape if all shapes are compatible, otherwise nil
-public func broadcast(_ shapes: [ShapeType]...) -> [ShapeType]? {
+public func broadcast(_ shapes: Shape...) -> Shape? {
     // Handle edge case: no shapes provided
     guard !shapes.isEmpty else {
         return []
@@ -32,7 +32,7 @@ public func broadcast(_ shapes: [ShapeType]...) -> [ShapeType]? {
 ///   - shape1: First shape
 ///   - shape2: Second shape
 /// - Returns: Broadcasted shape if compatible, otherwise nil
-private func broadcastTwoShapes(_ shape1: [ShapeType], _ shape2: [ShapeType]) -> [ShapeType]? {
+private func broadcastTwoShapes(_ shape1: Shape, _ shape2: Shape) -> Shape? {
     let ndim1 = shape1.count
     let ndim2 = shape2.count
     let maxDim = max(ndim1, ndim2)
@@ -58,11 +58,9 @@ private func broadcastTwoShapes(_ shape1: [ShapeType], _ shape2: [ShapeType]) ->
             // Shape2 has fewer dimensions, use dimension from shape1
             broadcastedDim = dim
         case (let d1?, let d2?):
-            // Both shapes have this dimension, check compatibility
-            if areDimensionsCompatible(d1, d2) {
-                // Return the larger dimension
-                broadcastedDim = getLargerDimension(d1, d2)
-            } else {
+            // Both shapes have this dimension, get compatible dimension
+            broadcastedDim = getCompatibleDimension(d1, d2)
+            if broadcastedDim == nil {
                 return nil  // Dimensions are not compatible
             }
         case (nil, nil):
@@ -79,47 +77,38 @@ private func broadcastTwoShapes(_ shape1: [ShapeType], _ shape2: [ShapeType]) ->
     return resultShape
 }
 
-/// Check if two dimensions are compatible for broadcasting
+/// Check if two dimensions are compatible for broadcasting and return the larger dimension
 /// - Parameters:
 ///   - dim1: First dimension
 ///   - dim2: Second dimension
-/// - Returns: True if dimensions are compatible, false otherwise
-private func areDimensionsCompatible(_ dim1: ShapeType, _ dim2: ShapeType) -> Bool {
+/// - Returns: The larger dimension if compatible, otherwise nil
+private func getCompatibleDimension(_ dim1: ShapeType, _ dim2: ShapeType) -> ShapeType? {
     switch (dim1, dim2) {
     case (.Static(let v1), .Static(let v2)):
         // Static dimensions are compatible if they are equal or one is 1
-        return v1 == v2 || v1 == 1 || v2 == 1
+        if v1 == v2 || v1 == 1 || v2 == 1 {
+            // Return the larger static value
+            return v1 >= v2 ? dim1 : dim2
+        }
+        return nil
     case (.Static(let v), .Dynamic):
         // Static dimension is compatible with dynamic if static is 1
-        return v == 1
+        if v == 1 {
+            return dim2
+        }
+        return nil
     case (.Dynamic, .Static(let v)):
         // Dynamic dimension is compatible with static if static is 1
-        return v == 1
+        if v == 1 {
+            return dim1
+        }
+        return nil
     case (.Dynamic(let name1), .Dynamic(let name2)):
         // Dynamic dimensions are compatible only if they have the same name
-        return name1 == name2
-    }
-}
-
-/// Get the larger of two dimensions
-/// - Parameters:
-///   - dim1: First dimension
-///   - dim2: Second dimension
-/// - Returns: The larger dimension
-private func getLargerDimension(_ dim1: ShapeType, _ dim2: ShapeType) -> ShapeType {
-    switch (dim1, dim2) {
-    case (.Static(let v1), .Static(let v2)):
-        // Return the larger static value
-        return v1 >= v2 ? dim1 : dim2
-    case (.Static(let v), .Dynamic):
-        // If static is 1, return dynamic, otherwise return static
-        return v == 1 ? dim2 : dim1
-    case (.Dynamic, .Static(let v)):
-        // If static is 1, return dynamic, otherwise return static
-        return v == 1 ? dim1 : dim2
-    case (.Dynamic, .Dynamic):
-        // For dynamic dimensions with the same name, return either one
-        // (they're equivalent at this point)
-        return dim1
+        if name1 == name2 {
+            // For dynamic dimensions with the same name, return either one
+            return dim1
+        }
+        return nil
     }
 }
