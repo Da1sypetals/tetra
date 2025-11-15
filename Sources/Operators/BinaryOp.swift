@@ -9,7 +9,7 @@ public class BinaryOp {
 
     /// Initialize a BinaryOp with operation name and data types
     /// - Parameters:
-    ///   - name: The name of the operation (e.g., "add", "mul", "matmul")
+    ///   - name: The name of the operation (e.g., "add", "mul")
     ///   - leftDtype: The data type of the left input tensor
     ///   - rightDtype: The data type of the right input tensor
     ///   - outputDtype: The data type of the output tensor
@@ -28,7 +28,7 @@ public class BinaryOp {
     /// - Throws: RuntimeError if the shapes are not broadcastable or data types don't match
     public func call(_ left: Node, _ right: Node) -> Node {
         // Check if left input data type matches the expected left data type
-        let actualLeftDtype = left.dtype()
+        let actualLeftDtype = left.dtype
         if actualLeftDtype != self.leftDtype {
             fatalError(
                 "Left input data type mismatch for operation '\(self.name)': expected \(self.leftDtype.rawValue), got \(actualLeftDtype.rawValue)"
@@ -36,7 +36,7 @@ public class BinaryOp {
         }
 
         // Check if right input data type matches the expected right data type
-        let actualRightDtype = right.dtype()
+        let actualRightDtype = right.dtype
         if actualRightDtype != self.rightDtype {
             fatalError(
                 "Right input data type mismatch for operation '\(self.name)': expected \(self.rightDtype.rawValue), got \(actualRightDtype.rawValue)"
@@ -44,8 +44,8 @@ public class BinaryOp {
         }
 
         // Get the shapes from the input nodes
-        let leftShape = left.shape()
-        let rightShape = right.shape()
+        let leftShape = left.shape
+        let rightShape = right.shape
 
         // Try to broadcast the shapes
         guard let broadcastedShape = broadcast(leftShape, rightShape) else {
@@ -85,4 +85,3 @@ public class BinaryOp {
         return self.outputDtype
     }
 }
-

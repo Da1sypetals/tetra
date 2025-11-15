@@ -8,7 +8,7 @@ public class UnaryOp {
 
     /// Initialize a UnaryOp with operation name and data types
     /// - Parameters:
-    ///   - name: The name of the operation (e.g., "relu", "sigmoid")
+    ///   - name: The name of the operation (e.g., "relu", "sigmoid", "mean")
     ///   - inputDtype: The data type of the input tensor
     ///   - outputDtype: The data type of the output tensor
     public init(name: String, inputDtype: DataType, outputDtype: DataType) {
@@ -22,7 +22,7 @@ public class UnaryOp {
     /// - Returns: A new Node representing the result of the unary operation
     public func call(_ input: Node) -> Node {
         // Check if input data type matches the expected input data type
-        let actualInputDtype = input.dtype()
+        let actualInputDtype = input.dtype
         if actualInputDtype != self.inputDtype {
             fatalError(
                 "Input data type mismatch for operation '\(self.name)': expected \(self.inputDtype.rawValue), got \(actualInputDtype.rawValue)"
@@ -30,7 +30,7 @@ public class UnaryOp {
         }
 
         // Get the shape from the input node
-        let inputShape = input.shape()
+        let inputShape = input.shape
 
         // Create and return a new unary node
         return Node.unary(

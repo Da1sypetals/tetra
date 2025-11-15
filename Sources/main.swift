@@ -10,13 +10,13 @@ let leafTensor = Node.leaf(
         .Dynamic("batch_size"),
     ], dtype: .float32)
 print("Leaf tensor: \(leafTensor)")
-print("Number of dimensions: \(leafTensor.ndim())")
+print("Number of dimensions: \(leafTensor.ndim)")
 print()
 
 // Example with higher dimensional tensor
 let highDimTensor = Node.leaf(shape: [ShapeType.Static(2), ShapeType.Static(3)], dtype: .float16)
 print("High dimensional tensor: \(highDimTensor)")
-print("Number of dimensions: \(highDimTensor.ndim())")
+print("Number of dimensions: \(highDimTensor.ndim)")
 print()
 
 // Example with different data types using UnaryOp
