@@ -1,12 +1,12 @@
 import Foundation
 
-enum ShapeType {
+public enum ShapeType {
     case Static(UInt64)
     case Dynamic(String)
 
 }
 
-enum DataType: String, CaseIterable {
+public enum DataType: String, CaseIterable {
     case float32 = "Float32"
     case float16 = "Float16"
     case bfloat16 = "BFloat16"
@@ -18,10 +18,14 @@ enum DataType: String, CaseIterable {
 }
 
 // Tensor enum with self-referencing capabilities and reference semantics
-indirect enum Node {
+public indirect enum Node {
     case leaf(shape: [ShapeType], dtype: DataType)
     case unary(name: String, shape: [ShapeType], dtype: DataType, operand: Node)
     case binary(name: String, shape: [ShapeType], dtype: DataType, left: Node, right: Node)
+
+    static func scalar(dtype: DataType) -> Node {
+        return .leaf(shape: [], dtype: dtype)
+    }
 
     // Get rank (number of dimensions) of the tensor
     func ndim() -> Int {
@@ -32,6 +36,17 @@ indirect enum Node {
             return shape.count
         case .binary(_, let shape, _, _, _):
             return shape.count
+        }
+    }
+
+    func dtype() -> DataType {
+        switch self {
+        case .leaf(_, let dtype):
+            return dtype
+        case .unary(_, _, let dtype, _):
+            return dtype
+        case .binary(_, _, let dtype, _, _):
+            return dtype
         }
     }
 
@@ -47,7 +62,7 @@ indirect enum Node {
 
     }
 
-    private func print_shape() -> String {
+    func print_shape() -> String {
         // if is static, just print the number
         // if dynamic, print <name>
         let shape = self.shape()

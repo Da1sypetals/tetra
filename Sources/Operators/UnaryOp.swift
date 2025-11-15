@@ -1,41 +1,58 @@
 import Foundation
 
-/// UnaryOp类表示一元操作符
+/// UnaryOp class represents a unary operation that can be applied to a tensor
 public class UnaryOp {
-    /// 操作符名称
-    public let name: String
+    private let name: String
+    private let inputDtype: DataType
+    private let outputDtype: DataType
     
-    /// 初始化方法
-    /// - Parameter name: 操作符名称
-    public init(name: String) {
+    /// Initialize a UnaryOp with operation name and data types
+    /// - Parameters:
+    ///   - name: The name of the operation (e.g., "relu", "sigmoid")
+    ///   - inputDtype: The data type of the input tensor
+    ///   - outputDtype: The data type of the output tensor
+    public init(name: String, inputDtype: DataType, outputDtype: DataType) {
         self.name = name
+        self.inputDtype = inputDtype
+        self.outputDtype = outputDtype
     }
     
-    /// 调用方法，执行一元操作
-    /// - Parameter operand: 操作数节点
-    /// - Returns: 结果节点
-    func call(_ operand: Node) -> Node {
-        // 默认实现返回一个unary节点
-        // 具体的子类可以重写此方法来实现特定的操作逻辑
-        return .unary(
-            name: name,
-            shape: operand.shape(),
-            dtype: getDataType(operand),
-            operand: operand
+    /// Apply the unary operation to an input node
+    /// - Parameter input: The input node to apply the operation to
+    /// - Returns: A new Node representing the result of the unary operation
+    public func call(_ input: Node) -> Node {
+        // Check if input data type matches the expected input data type
+        let actualInputDtype = input.dtype()
+        if actualInputDtype != self.inputDtype {
+            fatalError(
+                "Input data type mismatch for operation '\(self.name)': expected \(self.inputDtype.rawValue), got \(actualInputDtype.rawValue)"
+            )
+        }
+        
+        // Get the shape from the input node
+        let inputShape = input.shape()
+        
+        // Create and return a new unary node
+        return Node.unary(
+            name: self.name,
+            shape: inputShape,
+            dtype: self.outputDtype,
+            operand: input
         )
     }
     
-    /// 获取节点的数据类型
-    /// - Parameter node: 输入节点
-    /// - Returns: 数据类型
-    private func getDataType(_ node: Node) -> DataType {
-        switch node {
-        case .leaf(_, let dtype):
-            return dtype
-        case .unary(_, _, let dtype, _):
-            return dtype
-        case .binary(_, _, let dtype, _, _):
-            return dtype
-        }
+    /// Get the name of the operation
+    public func getName() -> String {
+        return self.name
+    }
+    
+    /// Get the input data type
+    public func getInputDtype() -> DataType {
+        return self.inputDtype
+    }
+    
+    /// Get the output data type
+    public func getOutputDtype() -> DataType {
+        return self.outputDtype
     }
 }
