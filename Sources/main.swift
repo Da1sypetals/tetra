@@ -132,3 +132,73 @@ print("Tensor3: \(tensor3)")
 print("Tensor4: \(tensor4)")
 print("Result2: \(result2)")
 print()
+
+// Test TernaryOp with a success example
+print("=== Testing TernaryOp ===")
+
+// Create three tensors with compatible shapes for a "where" operation
+// where(condition, x, y) - returns elements from x where condition is true, and from y where condition is false
+let conditionTensor = Node.leaf(shape: [ShapeType.Static(2), ShapeType.Static(3)], dtype: .bool)
+let xTensor = Node.leaf(shape: [ShapeType.Static(2), ShapeType.Static(3)], dtype: .float32)
+let yTensor = Node.leaf(shape: [ShapeType.Static(3)], dtype: .float32)
+
+// Create a ternary operation (where)
+let whereOp = TernaryOp(
+    name: "where", firstDtype: .bool, secondDtype: .float32, thirdDtype: .float32,
+    outputDtype: .float32)
+
+// Apply the operation
+let ternaryResult = whereOp.call(conditionTensor, xTensor, yTensor)
+
+// Print the results
+print("Condition tensor: \(conditionTensor)")
+print("X tensor: \(xTensor)")
+print("Y tensor: \(yTensor)")
+print("Ternary result: \(ternaryResult)")
+print()
+
+// Test with different shapes that can be broadcasted
+let conditionTensor2 = Node.leaf(
+    shape: [ShapeType.Static(1), ShapeType.Static(4), ShapeType.Static(1)], dtype: .bool)
+let xTensor2 = Node.leaf(
+    shape: [ShapeType.Dynamic("batch"), ShapeType.Static(1), ShapeType.Static(5)], dtype: .float16)
+let yTensor2 = Node.leaf(
+    shape: [ShapeType.Static(5)], dtype: .float16)
+
+// Create a select operation (similar to where)
+let selectOp = TernaryOp(
+    name: "select", firstDtype: .bool, secondDtype: .float16, thirdDtype: .float16,
+    outputDtype: .float16)
+
+// Apply the operation
+let ternaryResult2 = selectOp.call(conditionTensor2, xTensor2, yTensor2)
+
+// Print the results
+print("Condition tensor2: \(conditionTensor2)")
+print("X tensor2: \(xTensor2)")
+print("Y tensor2: \(yTensor2)")
+print("Ternary result2: \(ternaryResult2)")
+print()
+
+// Test with dynamic shapes that have the same name
+let conditionTensor3 = Node.leaf(
+    shape: [ShapeType.Dynamic("batch"), ShapeType.Static(3)], dtype: .bool)
+let xTensor3 = Node.leaf(
+    shape: [ShapeType.Dynamic("batch"), ShapeType.Static(1)], dtype: .int32)
+let yTensor3 = Node.leaf(
+    shape: [ShapeType.Static(3)], dtype: .int32)
+
+// Create a ternary operation with integer types
+let ternaryOpInt = TernaryOp(
+    name: "ternary_int", firstDtype: .bool, secondDtype: .int32, thirdDtype: .int32,
+    outputDtype: .int32)
+
+// Apply the operation
+let ternaryResult3 = ternaryOpInt.call(conditionTensor3, xTensor3, yTensor3)
+
+// Print the results
+print("Condition tensor3: \(conditionTensor3)")
+print("X tensor3: \(xTensor3)")
+print("Y tensor3: \(yTensor3)")
+print("Ternary result3: \(ternaryResult3)")
+print()

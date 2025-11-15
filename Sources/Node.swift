@@ -49,6 +49,7 @@ public indirect enum Node: CustomStringConvertible {
     case leaf(shape: Shape, dtype: DataType)
     case unary(name: String, shape: Shape, dtype: DataType, operand: Node)
     case binary(name: String, shape: Shape, dtype: DataType, left: Node, right: Node)
+    case ternary(name: String, shape: Shape, dtype: DataType, first: Node, second: Node, third: Node)
 
     static func scalar(dtype: DataType) -> Node {
         .leaf(shape: [], dtype: dtype)
@@ -57,21 +58,21 @@ public indirect enum Node: CustomStringConvertible {
     // Get rank (number of dimensions) of the tensor
     var ndim: Int {
         switch self {
-        case .leaf(let shape, _), .unary(_, let shape, _, _), .binary(_, let shape, _, _, _):
+        case .leaf(let shape, _), .unary(_, let shape, _, _), .binary(_, let shape, _, _, _), .ternary(_, let shape, _, _, _, _):
             return shape.count
         }
     }
 
     var dtype: DataType {
         switch self {
-        case .leaf(_, let dtype), .unary(_, _, let dtype, _), .binary(_, _, let dtype, _, _):
+        case .leaf(_, let dtype), .unary(_, _, let dtype, _), .binary(_, _, let dtype, _, _), .ternary(_, _, let dtype, _, _, _):
             return dtype
         }
     }
 
     var shape: Shape {
         switch self {
-        case .leaf(let shape, _), .unary(_, let shape, _, _), .binary(_, let shape, _, _, _):
+        case .leaf(let shape, _), .unary(_, let shape, _, _), .binary(_, let shape, _, _, _), .ternary(_, let shape, _, _, _, _):
             return shape
         }
     }
@@ -84,6 +85,8 @@ public indirect enum Node: CustomStringConvertible {
             return "Unary[name: \(name), shape: \(shape), dtype: \(dtype)]"
         case .binary(let name, _, let dtype, _, _):
             return "Binary[name: \(name), shape: \(shape), dtype: \(dtype)]"
+        case .ternary(let name, _, let dtype, _, _, _):
+            return "Ternary[name: \(name), shape: \(shape), dtype: \(dtype)]"
         }
     }
 }
